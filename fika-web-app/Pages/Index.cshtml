@@ -1,0 +1,14 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+Request Id: @Guid.NewGuid().ToString()     UTC: @DateTime.UtcNow
+<h1 class="display-4" style="color:@Environment.GetEnvironmentVariable("DEPLOYMENT_HOST_COLOR")">VARIABLES</h1>
+<div>Environment Name: @Environment.GetEnvironmentVariable("ENVIRONMENT_NAME")</div>
+<div>Environment Color: @Environment.GetEnvironmentVariable("DEPLOYMENT_HOST_COLOR")</div>
+<div>Machine Name: @Environment.MachineName</div>
+<div>Web App Instance Id: @Environment.GetEnvironmentVariable("WEBSITE_INSTANCE_ID")</div>
+<div>Web App ARRAffinity Cookie: @HttpContext.Request.Cookies["ARRAffinity"]</div>
+<div>Front Door Loadbalance ASLBSA Cookie: @HttpContext.Request.Cookies["ASLBSA"]</div>
