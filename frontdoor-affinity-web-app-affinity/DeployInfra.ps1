@@ -1,9 +1,3 @@
-# TODO
-# - FD: HTTP and HTTPS - done, Caching - done, Session Affinity
-# - Web Apps: Env Variables
-# - Search usage of each param
-# - SP
-# - Incorporate into YAML Pipeline
 param (
     [Parameter(Mandatory)]
     [string]$frontDoorResourceGroup,
@@ -36,22 +30,11 @@ param (
 )
 
 <#
-    -- MOVE INTO UNIFIED PS FILE -- 
-    - Az Login
-    - Clone Fika App
-    - Provision Infra
-    - Build Solution / Publish to Azure to both blue/green.. http://tattoocoder.com/dotnet-azure-a-net-core-global-tool-to-deploy-an-application-to-azure-in-one-command/
-    - Toggle
-    .\DeployInfra.ps1 -frontDoorResourceGroup "PR-frontdoor-bluegreen-rg1" -frontDoorName "frontdoor-blue-green-pr1" -frontDoorBackendPoolName "DefaultBackendPool" -webAppBlue "frontdoor-web-blue3" -webAppGreen "frontdoor-web-green3" -webAppBlueUrl "frontdoor-web-blue3.azurewebsites.net" -webAppGreenUrl "frontdoor-web-green2.azurewebsites.net" -appServicePlanBlue "appservice-blue3" -appServicePlanGreen "appservice-green3" -appServicePlanSize "B1"
-
-    .\DeployInfra.ps1 -frontDoorResourceGroup "pr-active-frontdoor-demo-2" -frontDoorName "pr-active-frontdoor-demo-2" -frontDoorBackendPoolName "DefaultBackendPool" -webAppBlue "pr-active-frontdoor-demo-2-web-app-blue" -webAppGreen "pr-active-frontdoor-demo-2-web-app-green" -webAppBlueUrl "pr-active-frontdoor-demo-2-web-app-blue.azurewebsites.net" -webAppGreenUrl "pr-active-frontdoor-demo-2-web-app-green.azurewebsites.net" -appServicePlanBlue "pr-active-frontdoor-demo-2-web-appserviceplan-blue" -appServicePlanGreen "pr-active-frontdoor-demo-2-web-appserviceplan-green" -appServicePlanSize "D1"
-
-    - Commit Web App into repo
-    - Test
+    - .Commit Web App into repo
+    - .Test
     - New App without session affinity
 #>
 
-exit
 Write-Host "Delete Resource Group: " $frontDoorResourceGroup
 #az group delete --name $frontDoorResourceGroup
 
@@ -76,7 +59,7 @@ $frontDoorEndPointName = "DefaultFrontendEndpoint" # Default value created by FD
 $frontDoorSessionAffinityEnabled = "Enabled"
 
 $webAppNumberOfWorkers = 2
-$gitrepo="https://github.com/philliproux/azure-frontdoor-bluegreen-deployment"
+$gitrepo = "https://github.com/philliproux/fika-frontdoor-webapp.git"
 
 Write-Host "Front Door Hostname:" $frontDoorFQDN
 
@@ -112,10 +95,6 @@ az network front-door backend-pool backend add --address $webAppBlueUrl --front-
 
 Write-Host "Create Front Door Route Rule"
 az network front-door routing-rule create --front-door-name $frontDoorName --frontend-endpoint $frontDoorEndPointName --name $frontDoorRouteName --resource-group $frontDoorResourceGroup --route-type $frontDoorRouteType --backend-pool $frontDoorBackEndPoolName --accepted-protocols $frontDoorRouteAcceptedProtocols --caching $frontDoorRouteCaching  #--patterns "/api/*"
-#REMOVE THIS! Hack! to enable SessionAffinityState - CLI not working!
-#$frontDoorResourceJson = az resource show --ids $frontDoorId
-#$frontDoorResourceJson = $frontDoorResourceJson -replace "\`"sessionAffinityEnabledState\`": \`"Disabled\`"", "`"sessionAffinityEnabledState`": `"Enabled`""
-#az network front-door frontend-endpoint create --front-door-name $frontDoorName --host-name $frontDoorFQDN --name $frontDoorEndPointName --resource-group $frontDoorResourceGroup --session-affinity-enabled $frontDoorSessionAffinityEnabled
 
 # List Front Door Resources
 Write-Host "`nList Backend Pools"
